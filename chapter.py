@@ -4,8 +4,6 @@ import cfscrape
 
 # options: cfscrape, cloudscraper
 
-# chapter_lengths = [46, 72, 43, 42, 29, 47, 30, 28, 34, 42, 55, 20, 35, 27, 20, 24, 28, 78]
-
 class Chapter:
 
     def __init__(self, number, title, texts):
@@ -14,7 +12,10 @@ class Chapter:
         self.texts = texts
 
     def __repr__(self):
-        return 'Chapter Number: ' + self.number + ', Chapter Title: ' + self.title + ', Chapter Length: ' + str(len(self.texts)) + ' texts'
+        info = 'Chapter Number: ' + self.number + ', Chapter Title: ' + self.title + ', Chapter Length: ' + str(len(self.texts)) + ' texts, \n'
+        for text in self.texts:
+            info += text.title + ', '
+        return info[:-1]
 
 class Text:
 
@@ -52,24 +53,24 @@ for current_number in range(1, 19):
             word = word[1:]
         verse_numbers.append(word)
 
-    # print(verse_numbers)
-
     chapter_texts = []
 
     for verse in verse_numbers:
-        current_text = scraper.get(current_path + '/' + verse).content
-        title = soup.find('div', {'class': lambda x: x and 'r r-title r-verse' in x}).text.strip()
-        devanagri = soup.find('div', {'class': lambda x: x and 'wrapper-devanagari' in x}).text.strip()
-        romanization = soup.find('div', {'class': lambda x: x and 'wrapper-verse-text' in x}).text.strip()
-        synonyms = soup.find('div', {'class': lambda x: x and 'wrapper-synonyms' in x}).text.strip()
-        translation = soup.find('div', {'class': lambda x: x and 'wrapper-translation' in x}).text.strip()
-        purport = soup.find('div', {'class': 'wrapper-purport'}).text.strip()
+        current_text = scraper.get(current_path + '/' + verse + '/').content
+        local_soup = BeautifulSoup(current_text, 'html.parser')
+        title = local_soup.find('div', {'class': 'r r-title r-verse'}).text.strip()
+        devanagri = local_soup.find('div', {'class': 'wrapper-devanagari'}).text.strip()
+        romanization = local_soup.find('div', {'class': 'wrapper-verse-text'}).text.strip()
+        synonyms = local_soup.find('div', {'class': 'wrapper-synonyms'}).text.strip()
+        translation = local_soup.find('div', {'class': 'wrapper-translation'}).text.strip()
+        
+        purport = '' 
+        if local_soup.find('div', {'class': 'wrapper-puport'}) is not None:
+            purport = local_soup.find('div', {'class': 'wrapper-puport'}).text.strip()
 
         chapter_texts.append(Text(title, devanagri, romanization, synonyms, translation, purport))
 
     content.append(Chapter(chapter_number, chapter_title, chapter_texts))
-
-    break
 
 for chapter in content:
     print(chapter)
