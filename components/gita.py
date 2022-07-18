@@ -1,6 +1,6 @@
 
-from addendum_finder import PreambleFinder, EpilogueFinder
-from chapter_finder import ChapterFinder
+from scraper.addendum_finder import PreambleFinder, EpilogueFinder
+from scraper.chapter_finder import ChapterFinder
 
 import os
 import json
