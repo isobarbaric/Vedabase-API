@@ -5,8 +5,6 @@ import os
 import json
 import shutil
 
-# options: cfscrape, cloudscraper
-
 class Chapter:
 
     def __init__(self, number, title, texts):
@@ -42,34 +40,32 @@ class ChapterFinder:
         scraper = cfscrape.create_scraper()  
         base_url = 'https://vedabase.io/en/library/bg/'
 
-        content = []
-
         if ('json' in os.listdir()):
             shutil.rmtree('json')
         os.mkdir('json')
         os.mkdir('json/gita')
 
-        for current_number in range(1, 19):
-            current_path = "https://vedabase.io/en/library/bg/" + str(current_number)
+        for idx in range(1, 19):
+            current_path = base_url + str(idx)
             current_chapter = scraper.get(current_path).content 
             soup = BeautifulSoup(current_chapter, 'html.parser')
 
-            chapter_number = soup.find('div', {'class': 'r r-title-small r-chapter'}).text.strip() 
-            chapter_title = soup.find('div', {'class': 'r r-lang-en r-chapter-title r-title'}).text.strip() 
+            current_number = soup.find('div', {'class': 'r r-title-small r-chapter'}).text.strip() 
+            current_title = soup.find('div', {'class': 'r r-lang-en r-chapter-title r-title'}).text.strip() 
             
-            texts = soup.findAll('dl', {'class': lambda x: x and 'r r-verse' in x})
-            verse_numbers = []
+            current_texts = soup.findAll('dl', {'class': lambda x: x and 'r r-verse' in x})
+            current_verses = []
             
-            for i in range(len(texts)):
-                word = texts[i].text
+            for i in range(len(current_texts)):
+                word = current_texts[i].text
                 word = word[word.find('TEXT')+5:word.find(':')]
                 if word[0] == ' ':
                     word = word[1:]
-                verse_numbers.append(word)
+                current_verses.append(word)
 
-            chapter_texts = []
+            current_texts = []
 
-            for verse in verse_numbers:
+            for verse in current_verses:
                 current_text = scraper.get(current_path + '/' + verse + '/').content
                 local_soup = BeautifulSoup(current_text, 'html.parser')
                 title = local_soup.find('div', {'class': 'r r-title r-verse'}).text.strip()
@@ -82,16 +78,16 @@ class ChapterFinder:
                 if local_soup.find('div', {'class': 'wrapper-puport'}) is not None:
                     purport = local_soup.find('div', {'class': 'wrapper-puport'}).text.strip()
 
-                chapter_texts.append(Text(title, devanagri, romanization, synonyms, translation, purport))
+                current_texts.append(Text(title, devanagri, romanization, synonyms, translation, purport))
 
-            content.append(Chapter(chapter_number, chapter_title, chapter_texts))
+            chapter_created = Chapter(current_number, current_title, current_texts)
 
-            with open('json/gita/' + 'chapter_' + str(current_number) + '.json', 'w') as storage:
+            with open('json/gita/' + 'chapter_' + str(idx) + '.json', 'w') as storage:
                 rn = {} 
-                rn['number'] = content[-1].number
-                rn['title'] = content[-1].title
+                rn['number'] = chapter_created[-1].number
+                rn['title'] = chapter_created[-1].title
                 rn['verses'] = {}
-                for text in content[-1].texts:
+                for text in chapter_created[-1].texts:
                     revised_title = text.title[text.title.rfind('.')+1:]
                     rn['verses'][revised_title] = {}
                     rn['verses'][revised_title]['title'] = text.title
