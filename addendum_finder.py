@@ -16,7 +16,7 @@ class PreambleFinder:
 
         # preamble class?
         preamble_path = ['setting-the-scene/', 'dedication/', 'preface/', 'introduction/']
-        preamble = []
+        preamble = dict()
 
         for url in preamble_path:
             current_page = scraper.get("https://vedabase.io/en/library/bg/" + url).content 
@@ -27,7 +27,7 @@ class PreambleFinder:
             for text_content in soup.findAll("div", {"id": "content"}):
                 page_content += text_content.text + '\n'
 
-            preamble.append([page_title, page_content])
+            preamble[url[:-1]] = [page_title, page_content]
 
         return preamble
 
@@ -48,7 +48,10 @@ class EpilogueFinder:
         for text_content in soup.findAll("div", {"id": "content"}):
             page_content += text_content.text + '\n'
 
-        return [page_title, page_content]
+        rn = dict()
+        rn['note-2nd-edition'] = page_content
+
+        return rn
 
 # a = EpilogueFinder()
 # print(a.find())

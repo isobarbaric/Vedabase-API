@@ -103,9 +103,4 @@ class ChapterFinder:
                 json_string = json.dumps(rn, indent=4)
                 storage.write(json_string)
 
-            # break
-
-a = ChapterFinder()
-a.find()
-
 # variable names are super confusing
