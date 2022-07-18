@@ -2,7 +2,7 @@
 from flask import Flask
 from flask_restful import Api, Resource
 
-from gita import BhagavadGita
+from components.gita import BhagavadGita
 
 gita = BhagavadGita()
 
