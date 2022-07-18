@@ -14,7 +14,7 @@ class BhagavadGita:
         self.epilogue = EpilogueFinder().find()
 
         # self.content = ChapterFinder().find()
-        for file in os.listdir('json/gita'):
+        for file in sorted(os.listdir('json/gita')):
             with open('json/gita/' + file, 'r') as storage:
                 self.chapters.append(json.load(storage))
 
