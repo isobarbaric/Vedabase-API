@@ -86,7 +86,7 @@ class ChapterFinder:
 
             content.append(Chapter(chapter_number, chapter_title, chapter_texts))
 
-            with open('json/gita/' + 'chapter_' + str(current_number) + '.txt', 'w') as storage:
+            with open('json/gita/' + 'chapter_' + str(current_number) + '.json', 'w') as storage:
                 rn = {} 
                 rn['number'] = content[-1].number
                 rn['title'] = content[-1].title
@@ -104,5 +104,8 @@ class ChapterFinder:
                 storage.write(json_string)
 
             # break
+
+a = ChapterFinder()
+a.find()
 
 # variable names are super confusing
