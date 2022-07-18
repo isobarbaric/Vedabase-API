@@ -22,7 +22,7 @@ for all of them, create classes for all of them
         - list of ``Text`` objects
     - API methods unique to ``Chapter`` objects are getters for the first 2 variables mentioned
 - for the ``Text``s:
-    - variables
+
         - text number
         - text devanagri
         - text romanization
