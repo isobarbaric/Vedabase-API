@@ -106,7 +106,3 @@ class ChapterFinder:
             # break
 
 # variable names are super confusing
-
-a = ChapterFinder()
-a.find()
-
